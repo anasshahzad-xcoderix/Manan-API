@@ -7,11 +7,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
         return [
@@ -22,7 +17,7 @@ class CourseResource extends JsonResource
             'duration' => $this->duration,
             'credit_hours' => $this->credit_hours,
             'fee' => $this->fee,
-            'department' => new DepartmentResource($this->whenLoaded('department')),
+            'students' => StudentResource::collection($this->whenLoaded('students')),
         ];
     }
 }
