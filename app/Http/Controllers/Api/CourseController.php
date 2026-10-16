@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreCourseRequest;
 use App\Models\Course;
 use App\Http\Resources\CourseResource;
 
@@ -15,22 +15,11 @@ class CourseController extends Controller
         return CourseResource::collection($courses);
     }
 
-    public function store(Request $request)
+    public function store(StoreCourseRequest $request)
     {
-        $validated = $request->validate([
-            'department_id' => 'required|exists:departments,id',
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'duration' => 'required|string',
-            'credit_hours' => 'required|integer',
-            'fee' => 'required|numeric',
-        ]);
-
-        $course = Course::create($validated);
+        $course = Course::create($request->validated());
 
         return (new CourseResource($course))
-            ->additional(['message' => 'Course created successfully!'])
-            ->response()
-            ->setStatusCode(201);
+            ->additional(['message' => 'Course created successfully!']);
     }
 }

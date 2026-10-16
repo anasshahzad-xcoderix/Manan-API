@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreDepartmentRequest;
 use App\Models\Department;
 use App\Http\Resources\DepartmentResource;
 
@@ -15,19 +15,11 @@ class DepartmentController extends Controller
         return DepartmentResource::collection($departments);
     }
 
-
-    public function store(Request $request)
+    public function store(StoreDepartmentRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:departments,name',
-            'description' => 'nullable|string',
-        ]);
-
-        $department = Department::create($validated);
+        $department = Department::create($request->validated());
 
         return (new DepartmentResource($department))
-            ->additional(['message' => 'Department created successfully!'])
-            ->response()
-            ->setStatusCode(201);
+            ->additional(['message' => 'Department created successfully!']);
     }
 }
