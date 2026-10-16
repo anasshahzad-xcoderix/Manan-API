@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCourseRequest;
 use App\Models\Course;
 use App\Http\Resources\CourseResource;
-
+use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
@@ -29,5 +29,20 @@ class CourseController extends Controller
 
         return (new CourseResource($course))
             ->additional(['message' => 'Course created successfully!']);
+    }
+
+    public function enrollStudent(Request $request, $id)
+    {
+        $request->validate([
+            'student_id' => 'required|exists:students,id'
+        ]);
+
+        $course = Course::findOrFail($id);
+        
+        $course->students()->syncWithoutDetaching($request->student_id);
+
+        return response()->json([
+            'message' => 'Student enrolled in course successfully!',
+        ]);
     }
 }

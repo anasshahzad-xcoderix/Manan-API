@@ -10,11 +10,13 @@ class Course extends Model
     use HasFactory;
     protected $guarded = [];
 
-    public function department(){
-        return $this->belongsTo(Department::class);
+    public function departments()
+    {
+        return $this->belongsToMany(Department::class, 'course_department');
     }
 
-    public function students(){
-        return $this->belongsToMany(Student::class);
+    public function students()
+    {
+        return $this->belongsToMany(Student::class, 'course_student');
     }
 }

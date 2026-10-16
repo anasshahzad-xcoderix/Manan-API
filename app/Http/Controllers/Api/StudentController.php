@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStudentRequest;
 use App\Models\Student;
+use Illuminate\Http\Request;
 use App\Http\Resources\StudentResource;
 
 class StudentController extends Controller
@@ -27,5 +28,20 @@ class StudentController extends Controller
     {
         $student = Student::with('courses')->findOrFail($id);
         return new StudentResource($student);
+    }
+
+    public function enrollCourse(Request $request, $id)
+    {
+        $request->validate([
+            'course_id' => 'required|exists:courses,id'
+        ]);
+
+        $student = Student::findOrFail($id);
+
+        $student->courses()->syncWithoutDetaching($request->course_id);
+
+        return response()->json([
+            'message' => 'Course assigned to student successfully!',
+        ]);
     }
 }
