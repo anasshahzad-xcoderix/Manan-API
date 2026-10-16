@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCourseRequest;
 use App\Models\Course;
 use App\Http\Resources\CourseResource;
+
 
 class CourseController extends Controller
 {
@@ -17,7 +19,15 @@ class CourseController extends Controller
     public function show($id)
     {
         $course = Course::with('students')->findOrFail($id);
-        
+
         return new CourseResource($course);
+    }
+
+    public function store(StoreCourseRequest $request)
+    {
+        $course = Course::create($request->validated());
+
+        return (new CourseResource($course))
+            ->additional(['message' => 'Course created successfully!']);
     }
 }
